@@ -5,13 +5,19 @@ res_limit_exps= read.csv('res_limit_exps_leiden_cpm.csv')
 res_limit_exps= read.csv('res_limit_exps_leiden_cpm_vary_res.csv')
 #res_limit_exps= read.csv('res_limit_exps_leiden_mod_tree.csv')
 #res_limit_exps$partition <- factor(res_limit_exps$partition, levels = c("Leiden-CPM(r=0.0001)", "SC(np=10)+Leiden-CPM(r=0.0001)", "SC(np=50)+Leiden-CPM(r=0.0001)", "SC(np=100)+Leiden-CPM(r=0.0001)"))
-res_limit_exps= read.csv('res_limit_exps_leiden_mod_ring.csv')
 res_limit_exps= read.csv('res_limit_exps_leiden_cpm_vary_res_acc.csv')
 
 give.n <- function(x){
   return(c(y = median(x)*1.05, label = length(x))) 
 }
 
+res_limit_exps= read.csv('res_limit_exps_leiden_mod_ring.csv')
+# making sure we get results with the default parameter (tr=0.8)
+res_limit_exps = res_limit_exps[res_limit_exps$partition!="FastEnsemble(Leiden-mod)",]
+res_limit_exps$partition[res_limit_exps$partition == 'FastEnsemble(Leiden-mod,tr=0.8)'] <- 'FastEnsemble(Leiden-mod)'
+# for Min's talk at CNA
+res_limit_exps = res_limit_exps[res_limit_exps$k!=500,]
+res_limit_exps = res_limit_exps[res_limit_exps$k!=5000,]
 
 ggplot(aes(x= as.factor(k),y=cluster_size,fill=partition, color=partition), data=subset(res_limit_exps, partition %in% c('ECG', 'FastConsensus(Louvain)', 'FastEnsemble(Leiden-mod)', 'Leiden-mod', 'Strict(np=10,Leiden-mod)','Strict(np=50,Leiden-mod)')))+
   #facet_wrap(~method,ncol=2)+
@@ -26,7 +32,7 @@ ggplot(aes(x= as.factor(k),y=cluster_size,fill=partition, color=partition), data
   scale_color_brewer(palette = "Dark2")+
   theme_bw()+
   theme(legend.position=c(0.2,0.6), legend.direction = "vertical",legend.title=element_blank())
-ggsave("res_limit_exps_leiden_mod_ring_0.9.pdf",width=12,height =3.3)
+ggsave("res_limit_exps_leiden_mod_ring_no_number.pdf",width=8,height =3.3)
 
 ggplot(aes(x= as.factor(k),y=cluster_size,fill=partition, color=partition), data=res_limit_exps)+
   #facet_wrap(~method,ncol=2)+
@@ -59,6 +65,12 @@ ggplot(aes(x= as.factor(res),y=cluster_size,fill=partition, color=partition), da
 ggsave("res_limit_exps_leiden_cpm_vary_res.pdf",width=7.4,height =3.3)
 
 res_limit_exps= read.csv('res_limit_exps_leiden_mod_ring_acc.csv')
+# making sure we get results with the default parameter (tr=0.8)
+res_limit_exps = res_limit_exps[res_limit_exps$partition!="FastEnsemble(Leiden-mod)",]
+res_limit_exps$partition[res_limit_exps$partition == 'FastEnsemble(Leiden-mod,tr=0.8)'] <- 'FastEnsemble(Leiden-mod)'
+# for Min's talk at CNA
+res_limit_exps = res_limit_exps[res_limit_exps$k!=500,]
+res_limit_exps = res_limit_exps[res_limit_exps$k!=5000,]
 
 ggplot(aes(x=as.factor(k), y=acc_value, fill=partition, color=partition, group=partition), data=res_limit_exps[(res_limit_exps$acc_measure=='NMI'),])+
   #facet_wrap(~acc_measure,ncol=3)+
@@ -74,7 +86,7 @@ ggplot(aes(x=as.factor(k), y=acc_value, fill=partition, color=partition, group=p
   theme_bw()+
   theme(legend.position = "none", legend.direction = "horizontal",
         axis.text.x = element_text(angle=30))
-ggsave("res_limit_exps_leiden_mod_nmi_dc_50.pdf",width=2.5,height=2)
+ggsave("res_limit_exps_leiden_mod_nmi.pdf",width=2.5,height=2)
 
 ggplot(aes(x=as.factor(k), y=acc_value, fill=partition, color=partition, group=partition), data=res_limit_exps[(res_limit_exps$acc_measure=='ARI'),])+
   #facet_wrap(~acc_measure,ncol=3)+
@@ -89,7 +101,7 @@ ggplot(aes(x=as.factor(k), y=acc_value, fill=partition, color=partition, group=p
   theme_bw()+
   theme(legend.position = "none", legend.direction = "horizontal",
         axis.text.x = element_text(angle=30))
-ggsave("res_limit_exps_leiden_mod_ari_dc_50.pdf",width=2.5,height=2)
+ggsave("res_limit_exps_leiden_mod_ari.pdf",width=2.5,height=2)
 
 res_limit_exps= read.csv('res_limit_exps_leiden_cpm_acc.csv')
 
@@ -201,7 +213,7 @@ ggplot(aes(x=as.factor(k), y=acc_value, fill=partition, color=partition, group=p
   theme(legend.position = "none", legend.direction = "horizontal",
         axis.title.x = element_blank(),
         axis.text.x = element_text(angle=30))
-ggsave("res_limit_exps_lieden_mod_ring_accuracy_0.9.pdf",width=6,height=2)
+ggsave("res_limit_exps_lieden_mod_ring_accuracy.pdf",width=6,height=2)
 
 
 ggplot(aes(x=as.factor(k), y=acc_value, fill=partition, color=partition, group=partition), data=subset(res_limit_exps, partition %in% c('ECG', 'FastConsensus(Louvain)', 'FastEnsemble(Leiden-mod)', 'Leiden-mod', 'Strict(np=10,Leiden-mod)','Strict(np=50,Leiden-mod)') & acc_measure %in% c('FNR', 'FPR')))+
@@ -219,7 +231,7 @@ ggplot(aes(x=as.factor(k), y=acc_value, fill=partition, color=partition, group=p
   theme(legend.position = "none", legend.direction = "horizontal",
         axis.title.x = element_blank(),
         axis.text.x = element_text(angle=30))
-ggsave("res_limit_exps_lieden_mod_ring_fpr_fnr_0.9.pdf",width=4,height=2)
+ggsave("res_limit_exps_lieden_mod_ring_fpr_fnr.pdf",width=4,height=2)
 
 
 res_limit_exps_lfr= read.csv('res_limit_exps_leiden_mod_lfr_tr_acc.csv')
