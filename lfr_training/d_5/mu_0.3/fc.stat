@@ -1,0 +1,23 @@
+	Command being timed: "python3.9 /u/syt3/scratch/clustering/fast_consensus.py -f network.dat --alg louvain -np 10 -t 0.2 -d 0.02"
+	User time (seconds): 197.24
+	System time (seconds): 0.37
+	Percent of CPU this job got: 98%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 3:21.04
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 140412
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 36
+	Minor (reclaiming a frame) page faults: 366689
+	Voluntary context switches: 1946
+	Involuntary context switches: 321
+	Swaps: 0
+	File system inputs: 1792
+	File system outputs: 968
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
