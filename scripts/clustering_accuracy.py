@@ -1,4 +1,6 @@
 from sklearn.metrics.cluster import normalized_mutual_info_score, adjusted_mutual_info_score, adjusted_rand_score
+from sklearn.metrics.cluster import contingency_matrix
+from scipy.optimize import linear_sum_assignment
 import numpy as np
 import argparse
 
@@ -61,29 +63,29 @@ def get_membership_list_add_singletons(gt_path, f1_path):
 
 
 def measure_accuracy(mem_true, mem_est):
-    n = len(mem_true)
-    tn, tp, fn, fp = 0, 0, 0, 0
-    for i in range(n):
-        for j in range(i + 1, n):
-            if mem_true[i] == mem_true[j]:
-                if mem_est[i] == mem_est[j]:
-                    tp += 1
-                else:
-                    fn += 1
-            else:
-                if mem_est[i] == mem_est[j]:
-                    fp += 1
-                else:
-                    tn += 1
-    precision = tp / (tp + fp)
-    recall = tp / (tp + fn)
-    f1_score = 2 * precision * recall / (precision + recall)
-    fnr = fn / (fn + tp)
-    fpr = fp / (fp + tn)
+    mem_true = np.asarray(mem_true)
+    mem_est = np.asarray(mem_est)
 
     nmi = normalized_mutual_info_score(mem_true, mem_est)
     ari = adjusted_rand_score(mem_true, mem_est)
     ami = adjusted_mutual_info_score(mem_true, mem_est)
+
+    labels_true = np.unique(mem_true)
+    labels_pred = np.unique(mem_est)
+
+    cm = contingency_matrix(mem_true, mem_est)
+    tp = np.sum(cm * (cm - 1)) / 2
+    total_pairs = len(mem_true) * (len(mem_true) - 1) / 2
+    fn_fp = total_pairs - tp
+    fn = np.sum(np.sum(cm, axis=1) * (np.sum(cm, axis=1) - 1)) / 2 - tp
+    fp = np.sum(np.sum(cm, axis=0) * (np.sum(cm, axis=0) - 1)) / 2 - tp
+    tn = total_pairs - tp - fp - fn
+
+    precision = tp / (tp + fp)
+    recall = tp / (tp + fn)
+    f1_score = 2 * precision * recall / (precision + recall)
+    fnr = fn / (fn + tp) if (fn + tp) else 0
+    fpr = fp / (fp + tn) if (fp + tn) else 0
 
     return nmi, ami, ari, precision, recall, f1_score, fnr, fpr
 
@@ -122,4 +124,3 @@ if __name__ == '__main__':
     print("Adjusted rand index (ARI): ", ari)
     print("False positive rate (FPR), False negative rate (FNR):", fpr, fnr)
     print("Precision, Recall, F1-score:", precision, recall, f1_score)
-
