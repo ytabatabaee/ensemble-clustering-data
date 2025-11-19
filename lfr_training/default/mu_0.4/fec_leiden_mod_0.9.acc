@@ -2,8 +2,6 @@
 #nodes in estimated partition: 10000
 
 Accuracy:
-Normalized mutual information (NMI):  0.9118788472632654
-Adjusted mutual information (AMI):  0
+Normalized mutual information (NMI):  0.9118788472632655
+Adjusted mutual information (AMI):  0.8855890386646832
 Adjusted rand index (ARI):  0.8189720683048374
-False positive rate (FPR), False negative rate (FNR): 0 0
-Precision, Recall, F1-score: 0 0 0

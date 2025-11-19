@@ -3,7 +3,5 @@
 
 Accuracy:
 Normalized mutual information (NMI):  0.6602040140829231
-Adjusted mutual information (AMI):  0
+Adjusted mutual information (AMI):  0.12294536109645955
 Adjusted rand index (ARI):  0.07260870915110712
-False positive rate (FPR), False negative rate (FNR): 0 0
-Precision, Recall, F1-score: 0 0 0
