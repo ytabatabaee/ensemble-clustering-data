@@ -1,9 +1,16 @@
 #nodes in ground-truth partition: 10000
 #nodes in estimated partition: 10000
+Ground-truth statistics:
+cluster count: 573
+min, max, mean, median cluster sizes: 10 86 17.452006980802793 14.0
+
+Estimated clustering statistics:
+cluster count: 534
+min, max, mean, median cluster sizes: 10 86 18.726591760299627 15.0
 
 Accuracy:
 Normalized mutual information (NMI):  0.9955015120419957
-Adjusted mutual information (AMI):  0
+Adjusted mutual information (AMI):  0.9906939625982063
 Adjusted rand index (ARI):  0.9821781877395607
-False positive rate (FPR), False negative rate (FNR): 0 0
-Precision, Recall, F1-score: 0 0 0
+False positive rate (FPR), False negative rate (FNR): 8.350047294547587e-05 0.0
+Precision, Recall, F1-score: 0.965061069726864 1.0 0.9822199264891078
