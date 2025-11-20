@@ -1,0 +1,7 @@
+#nodes in ground-truth partition: 900
+#nodes in estimated partition: 900
+
+Accuracy:
+Normalized mutual information (NMI):  0.9843550847472665
+Adjusted mutual information (AMI):  0.9698258395862189
+Adjusted rand index (ARI):  0.8988865144528174
