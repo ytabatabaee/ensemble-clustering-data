@@ -361,7 +361,7 @@ def calculate_stats(graph, partition, n, k, res, method, partition_name, ground_
 
 
 def calculate_stats_mu(partition, n, mu, rep, partition_name, ground_truth_membership, acc_df):
-    membership = get_membership_list_from_dict(partition, n)
+    membership = partition# get_membership_list_from_dict(partition, n)
     #print(membership)
     nmi, ami, ari, precision, recall, f1_score, fnr, fpr = measure_accuracy(ground_truth_membership, membership)
     print("Normalized mutual information (NMI): ", nmi)
@@ -408,12 +408,12 @@ def stability_exp():
         #groundtruth = list(group_to_partition(membership_list_to_dict(groundtruth)))
         #print(groundtruth)
 
-        for rep in range(1, 11):
-            print('ECG')
-            g = ig.Graph.from_networkx(graph)
-            ec = g.community_ecg(ens_size=10)
-            acc_df, membership = calculate_stats_mu(list(ec), n, mu, rep, 'ECG', groundtruth, acc_df)
-            write_membership_to_file(dir_path + 'mu_' + str(mu) + '/ecg_r'+str(rep).zfill(2)+'.dat', membership)
+        # for rep in range(1, 3):
+        #     print('ECG')
+        #     g = ig.Graph.from_networkx(graph)
+        #     ec = g.community_ecg(ens_size=10)
+        #     acc_df, membership = calculate_stats_mu(list(ec), n, mu, rep, 'ECG', groundtruth, acc_df)
+        #     write_membership_to_file(dir_path + 'mu_' + str(mu) + '/ecg_r'+str(rep).zfill(2)+'.dat', membership)
 
             # print('Leiden-MOD')
             # partition = normal_clustering(graph, 'leiden-mod', seed=rep)
@@ -421,44 +421,47 @@ def stability_exp():
             # write_membership_to_file(dir_path + 'mu_' + str(mu) + '/leiden_mod_r'+str(rep).zfill(2)+'.dat', membership)
             #
             # print('FastEnsemble')
-            # partition = fast_ensemble(graph, 'leiden-mod', n_p=10, tr=0.8, random_seed=rep)
+            # partition = fast_ensemble(graph, 'leiden-mod', n_p=10, tr=0.8)
             # acc_df, membership = calculate_stats_mu(list(partition), n, mu, rep, 'FastEnsemble', groundtruth, acc_df)
-            # write_membership_to_file(dir_path + 'mu_' + str(mu) + '/fec_leiden_mod_r'+str(rep).zfill(2)+'.dat', membership)
+            # write_membership_to_file(dir_path + 'mu_' + str(mu) + '/fec_rs_leiden_mod_r'+str(rep).zfill(2)+'.dat', membership)
 
-        #leiden_partitions = []
-        #fast_ensemble_partitions = []
+        leiden_partitions = []
+        fast_ensemble_partitions = []
         ecg_partitions=[]
-        for rep in range(1, 11):
-            # _, partition = read_network_partition(dir_path + 'mu_' + str(mu) + '/network.dat',
-            #                                             dir_path + 'mu_' + str(mu) + '/leiden_mod_r'+str(rep).zfill(2)+'.dat')
-            # leiden_partitions.append(list(partition))
+        for rep in range(1, 3):
+            _, partition = read_network_partition(dir_path + 'mu_' + str(mu) + '/network.dat',
+                                                        dir_path + 'mu_' + str(mu) + '/leiden_mod_r'+str(rep).zfill(2)+'.dat')
+            leiden_partitions.append(list(partition))
+            acc_df, _ = calculate_stats_mu(list(partition), n, mu, rep, 'Leiden-mod', groundtruth, acc_df)
 
-            # _, partition = read_network_partition(dir_path + 'mu_' + str(mu) + '/network.dat',
-            #                                       dir_path + 'mu_' + str(mu) + '/fec_leiden_mod_r' + str(rep).zfill(2) + '.dat')
-            # fast_ensemble_partitions.append(list(partition))
+            _, partition = read_network_partition(dir_path + 'mu_' + str(mu) + '/network.dat',
+                                                  dir_path + 'mu_' + str(mu) + '/fec_leiden_mod_r' + str(rep).zfill(2) + '.dat')
+            fast_ensemble_partitions.append(list(partition))
+            acc_df, _ = calculate_stats_mu(list(partition), n, mu, rep, 'FastEnsemble', groundtruth, acc_df)
 
             _, partition = read_network_partition(dir_path + 'mu_' + str(mu) + '/network.dat',
                                                   dir_path + 'mu_' + str(mu) + '/ecg_r'+str(rep).zfill(2)+'.dat')
             ecg_partitions.append(list(partition))
+            acc_df, _ = calculate_stats_mu(list(partition), n, mu, rep, 'ECG', groundtruth, acc_df)
 
-        for rep1 in range(0, 10):
-            for rep2 in range(rep1+1, 10):
+        for rep1 in range(0, 2):
+            for rep2 in range(rep1+1, 2):
                 print(rep1, rep2)
                 print('ECG')
                 acc_df_pairwise, _ = calculate_stats_mu_pairwise(ecg_partitions[rep1], n, mu, rep1, rep2,
                                                         'ECG', ecg_partitions[rep2],
                                                         acc_df_pairwise)
-                # print('Leiden-mod')
-                # acc_df, _ = calculate_stats_mu_pairwise(leiden_partitions[rep1], n, mu, rep1, rep2,
-                #                                                  'Leiden-MOD', leiden_partitions[rep2],
-                #                                                 acc_df)
-                # print('FastEnsemble')
-                # acc_df, _ = calculate_stats_mu_pairwise(fast_ensemble_partitions[rep1], n, mu, rep1, rep2,
-                #                                                  'FastEnsemble', fast_ensemble_partitions[rep2],
-                #                                                  acc_df)
+                print('Leiden-mod')
+                acc_df_pairwise, _ = calculate_stats_mu_pairwise(leiden_partitions[rep1], n, mu, rep1, rep2,
+                                                                 'Leiden-mod', leiden_partitions[rep2],
+                                                                acc_df_pairwise)
+                print('FastEnsemble')
+                acc_df_pairwise, _ = calculate_stats_mu_pairwise(fast_ensemble_partitions[rep1], n, mu, rep1, rep2,
+                                                                 'FastEnsemble', fast_ensemble_partitions[rep2],
+                                                                 acc_df_pairwise)
 
-    #acc_df.to_csv('stability_exp.csv')
-    #acc_df.to_csv('stability_exp_pairwise.csv')
+    acc_df.to_csv('stability_exp.csv')
+    acc_df_pairwise.to_csv('stability_exp_pairwise.csv')
 
 
 

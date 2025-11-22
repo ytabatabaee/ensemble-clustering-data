@@ -237,7 +237,7 @@ def gen_tree_of_cliques(k, n):
 
 
 def measure_accuracy(mem_true, mem_est):
-    '''n = len(mem_true)
+    n = len(mem_true)
     tn, tp, fn, fp = 0, 0, 0, 0
     for i in range(n):
         for j in range(i + 1, n):
@@ -255,19 +255,19 @@ def measure_accuracy(mem_true, mem_est):
     recall = tp / (tp + fn)
     f1_score = 2 * precision * recall / (precision + recall)
     fnr = fn / (fn + tp)
-    fpr = fp / (fp + tn)'''
+    fpr = fp / (fp + tn)
 
     nmi = normalized_mutual_info_score(mem_true, mem_est)
     ari = adjusted_rand_score(mem_true, mem_est)
     ami = adjusted_mutual_info_score(mem_true, mem_est)
-    #ami = 0
 
-    return nmi, 0, ari, 0, 0, 0, 0, 0
-    #return nmi, ami, ari, precision, recall, f1_score, fnr, fpr
+    #return nmi, ami, ari, 0, 0, 0, 0, 0
+    return nmi, ami, ari, precision, recall, f1_score, fnr, fpr
 
 
 def read_network_partition(net_path, gt_path):
     graph = nx.read_edgelist(net_path, nodetype=int)
+    #print(graph.edges)
 
     # for E-R experiments
     '''
@@ -286,6 +286,7 @@ def read_network_partition(net_path, gt_path):
     for i in range(len(membership)):
         if membership[i] == '':
             membership[i] = n + i
+    #print(membership)
     return graph, membership
 
 
@@ -722,54 +723,90 @@ def ring_exp_cpm_n():
 def ring_exp():
     df = pd.DataFrame(columns=['k', "n", "res", "method", "partition", "cluster_id", "cluster_size"])
     acc_df = pd.DataFrame(columns=['k', "n", "res", "method", "partition", "acc_measure", "acc_value"])
-    for n in [90, 100, 500, 1000, 5000]:
+    for n in [90, 100, 500, 1000, 5000, 10000]:
         print('n:', n)
         for k in [10]:
+            #graph = nx.ring_of_cliques(num_cliques=n, clique_size=k)
+            # ground_truth_membership = sum([[i]*k for i in range(n)], [])
+            # #graph = gen_tree_of_cliques(k, n)
+            #
+            # if not os.path.exists('ring_mod/n_' + str(n)):
+            #     os.mkdir('ring_mod/n_' + str(n))
+            # nx.write_edgelist(graph, './network.dat', data=False)#, data=False)
+            #
+            # write_membership_to_file('ring_mod/n_' + str(n) + '/community.dat', ground_truth_membership)
+
+            # reading networkX graphs don't match when is written to file
+            graph, ground_truth_membership = read_network_partition('../ring_mod/n_' + str(n) + '/network.dat',
+                                                                       '../ring_mod/n_' + str(n) + '/community.dat')
+            #graph = nx.read_edgelist('./network.dat', nodetype=int)
             graph = nx.ring_of_cliques(num_cliques=n, clique_size=k)
-            ground_truth_membership = sum([[i]*k for i in range(n)], [])
-            #graph = gen_tree_of_cliques(k, n)
-
-            if not os.path.exists('ring_mod_2/n_' + str(n)):
-                os.mkdir('ring_mod_2/n_' + str(n))
-            nx.write_edgelist(graph, 'ring_mod_2/n_' + str(n) + '/network.dat', data=False)
-
-            write_membership_to_file('ring_mod_2/n_' + str(n) + '/community.dat', ground_truth_membership)
+            #print(nx.is_isomorphic(graph, graph2))
+            #print(graph.edges)
 
             for method in ['leiden-mod']:
-                print('original')
-                partition = normal_clustering(graph, method)
-                df, acc_df, membership = calculate_stats(graph, partition, n, k, 'mod', method,
-                                             'Leiden-MOD', ground_truth_membership, acc_df, df)
-                write_membership_to_file('ring_mod_2/n_' + str(n) + '/leiden_mod.dat', membership)
+                # print('original')
+                # partition = normal_clustering(graph, method)
+                # df, acc_df, membership = calculate_stats(graph, partition, n, k, 'mod', method,
+                #                              'Leiden-MOD', ground_truth_membership, acc_df, df)
+                # write_membership_to_file('ring_mod/n_' + str(n) + '/leiden_mod.dat', membership)
 
                 '''print('FEC n = 10')
                 partition = simple_consensus(graph, method, n_p=10)
                 df, acc_df = calculate_stats(graph, list(partition), n, k, 'mod', method,
                                              'FastEnsemble(np=10)', ground_truth_membership, acc_df, df)'''
 
-                print('TC n = 10')
+                print('FEC n = 5')
+                partition = fast_ensemble(graph, 'leiden-mod', n_p=5, tr=0.8)
+                df, acc_df, membership = calculate_stats(graph, list(partition), n, k, 'mod', method,
+                                             'FastEnsemble(np=5,Leiden-MOD)', ground_truth_membership, acc_df, df)
+                write_membership_to_file('../ring_mod/n_' + str(n) + '/fec_5_leiden_mod.dat', membership)
+
+                print('FEC n = 50')
                 partition = fast_ensemble(graph, 'leiden-mod', n_p=50, tr=0.8)
                 df, acc_df, membership = calculate_stats(graph, list(partition), n, k, 'mod', method,
-                                             'FastEnsemble(Leiden-MOD)', ground_truth_membership, acc_df, df)
-                write_membership_to_file('ring_mod_2/n_' + str(n) + '/fec_50_leiden_mod.dat', membership)
+                                                         'FastEnsemble(np=50,Leiden-MOD)', ground_truth_membership, acc_df,
+                                                         df)
+                write_membership_to_file('../ring_mod/n_' + str(n) + '/fec_50_leiden_mod.dat', membership)
+
+                print('FEC n = 100')
+                partition = fast_ensemble(graph, 'leiden-mod', n_p=100, tr=0.8)
+                df, acc_df, membership = calculate_stats(graph, list(partition), n, k, 'mod', method,
+                                                         'FastEnsemble(np=100,Leiden-MOD)', ground_truth_membership, acc_df,
+                                                         df)
+                write_membership_to_file('../ring_mod/n_' + str(n) + '/fec_100_leiden_mod.dat', membership)
 
                 '''print('FEC(louvain) n = 10')
                 partition = fast_ensemble(graph, 'louvain', n_p=10)
                 df, acc_df = calculate_stats(graph, list(partition), n, k, 'mod', method,
                                              'FastEnsemble(Louvain)', ground_truth_membership, acc_df, df)'''
 
-                print('ECG n = 10')
-                g = ig.Graph.from_networkx(graph)
-                ec = g.community_ecg(ens_size=10)
-                df, acc_df, membership = calculate_stats(graph, list(ec), n, k, 'mod', method,
-                                             'ECG', ground_truth_membership, acc_df, df)
-                write_membership_to_file('ring_mod_2/n_' + str(n) + '/ecg.dat', membership)
+                # print('ECG n = 10')
+                # g = ig.Graph.from_networkx(graph)
+                # ec = g.community_ecg(ens_size=10)
+                # df, acc_df, membership = calculate_stats(graph, list(ec), n, k, 'mod', method,
+                #                              'ECG', ground_truth_membership, acc_df, df)
+                # write_membership_to_file('ring_mod/n_' + str(n) + '/ecg.dat', membership)
+
+                print('SC n = 5')
+                partition = strict_consensus(graph, method, n_p=5)
+                df, acc_df, membership = calculate_stats(graph, list(partition), n, k, 'mod', method,
+                                                         'Strict(np=5,Leiden-MOD)', ground_truth_membership, acc_df,
+                                                         df)
+                write_membership_to_file('../ring_mod/n_' + str(n) + '/strict_np5_leiden_mod.dat', membership)
+
+                print('SC n = 100')
+                partition = strict_consensus(graph, method, n_p=100)
+                df, acc_df, membership = calculate_stats(graph, list(partition), n, k, 'mod', method,
+                                                         'Strict(np=100,Leiden-MOD)', ground_truth_membership, acc_df,
+                                                         df)
+                write_membership_to_file('../ring_mod/n_' + str(n) + '/strict_np100_leiden_mod.dat', membership)
 
                 '''print('SC n = 10')
                 partition = strict_consensus(graph, method, n_p=10)
                 df, acc_df, membership = calculate_stats(graph, list(partition), n, k, 'mod', method,
                                              'Strict(np=10,Leiden-MOD)', ground_truth_membership, acc_df, df)
-                write_membership_to_file('ring_mod_2/n_' + str(n) + '/strict_np10_leiden_mod.dat', membership)
+                write_membership_to_file('ring_mod/n_' + str(n) + '/strict_np10_leiden_mod.dat', membership)
 
                 print('SC n = 50')
                 partition = strict_consensus(graph, method, n_p=50)
@@ -777,8 +814,8 @@ def ring_exp():
                                              'Strict(np=50,Leiden-MOD)', ground_truth_membership, acc_df, df)
                 write_membership_to_file('ring_mod/n_' + str(n) + '/strict_np50_leiden_mod.dat', membership)'''
 
-    df.to_csv('res_limit_exps_leiden_mod_ring_dc_50.csv')
-    acc_df.to_csv('res_limit_exps_leiden_mod_ring_acc_dc_50.csv')
+    df.to_csv('res_limit_exps_leiden_mod_ring_vary_np.csv')
+    acc_df.to_csv('res_limit_exps_leiden_mod_ring_acc_vary_np.csv')
 
 
 def tree_mod_exp():
@@ -1018,8 +1055,8 @@ if __name__ == "__main__":
     #read_fast_consensus_results()
     #tree_mod_exp()
     #ring_exp_cpm()
-    #ring_exp()
-    ring_exp_cpm_n()
+    ring_exp()
+    #ring_exp_cpm_n()
     #ring_exp_cpm_k()
     #ring_exp_cpm()
     #lfr_exp_mu()
