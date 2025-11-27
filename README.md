@@ -10,6 +10,16 @@ This repository includes the new datasets generated for this study, as well as t
 
 ## Dataset Description
 
+Each directory includes the datasets and results for one set of networks used in this study. Each subdirectory is a model condition for that dataset. Below is a description of each directory:
+- [lfr_training/](https://github.com/ytabatabaee/ensemble-clustering-data/tree/main/lfr_training): LFR algorithm design datasets with mixing parameters varying between `0.1` and `0.9`. The `default` model condition has 10,000 nodes and average degree of 10. The model conditions named as `d_[AVG-DEG]` have 10,000 nodes with average degree of `[AVG-DEG]` (5 or 20) and the model conditions named as `n_[NUM-NODES]` have average degree of 10 with `[NUM-NODES]` nodes (1000 or 100,000).
+- [erdos_renyi/](https://github.com/ytabatabaee/ensemble-clustering-data/tree/main/erdos_renyi): Erdos-Renyi networks with 1000 nodes and density (`p`) varying between `0.001` and `0.1`.
+- [erdos_renyi_lfr/](https://github.com/ytabatabaee/ensemble-clustering-data/tree/main/erdos_renyi_lfr): Erdos-Renyi network of size 1000 with density (`p`) varying between `0.001` and `0.1` connected to an LFR graph of size 1000.
+- [erdos_renyi_ring/](https://github.com/ytabatabaee/ensemble-clustering-data/tree/main/erdos_renyi_ring): Erdos-Renyi network of size 1000 with density (`p`) varying between `0.001` and `0.1` connected to a Ring-of-Cliques network with 100 cliques of size 10.
+- [tandon_et_al/](https://github.com/ytabatabaee/ensemble-clustering-data/tree/main/tandon_et_al): Reproduction of the 10,000 node LFR datasets from Tandon et al. (2019).
+- [tree_mod/](https://github.com/ytabatabaee/ensemble-clustering-data/tree/main/tree_mod): Tree-of-Cliques networks with number of nodes (`n`) varying between 90 and 5000 and cliques of size 10 used in modularity experiments.
+- [ring_mod/](https://github.com/ytabatabaee/ensemble-clustering-data/tree/main/ring_mod): Ring-of-Cliques networks with number of nodes (`n`) varying between 90 and 10,000 and cliques of size 10 used in modularity experiments.
+- [ring_cpm/](https://github.com/ytabatabaee/ensemble-clustering-data/tree/main/ring_cpm) and [ring_cpm_res/](https://github.com/ytabatabaee/ensemble-clustering-data/tree/main/ring_cpm_res): Ring-of-Cliques networks with number of nodes (`n`) varying between 90 and 10,000 and cliques of size 10 used in the CPM experiments.
+
 Below is the description of files in each directory:
 - `network.dat`: network edge-list
 - `community.dat`: ground-truth community structure in the form of `node`:`membership`
