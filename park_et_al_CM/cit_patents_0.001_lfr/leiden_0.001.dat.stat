@@ -1,0 +1,23 @@
+	Command being timed: "python3 estimate_properties.py -n /u/syt3/scratch/clustering/CM_paper_LFR_data/cit_patents_0.001_lfr/network.dat -c /u/syt3/scratch/clustering/CM_paper_LFR_data/cit_patents_0.001_lfr/leiden_0.001.dat"
+	User time (seconds): 276.39
+	System time (seconds): 5.72
+	Percent of CPU this job got: 65%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 7:12.40
+	Average shared text size (kbytes): 0
+	Average unshared data size (kbytes): 0
+	Average stack size (kbytes): 0
+	Average total size (kbytes): 0
+	Maximum resident set size (kbytes): 5414212
+	Average resident set size (kbytes): 0
+	Major (requiring I/O) page faults: 0
+	Minor (reclaiming a frame) page faults: 6075209
+	Voluntary context switches: 3020
+	Involuntary context switches: 10608
+	Swaps: 0
+	File system inputs: 1058608
+	File system outputs: 8
+	Socket messages sent: 0
+	Socket messages received: 0
+	Signals delivered: 0
+	Page size (bytes): 4096
+	Exit status: 0
